@@ -7,6 +7,7 @@ import { Label } from '../components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../components/ui/card';
 import { toast } from 'sonner';
 import { Dumbbell } from 'lucide-react';
+import { TurnstileGate } from '../components/TurnstileGate';
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
@@ -32,8 +33,9 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-gray-100 p-4">
-      <Card className="w-full max-w-md">
+    <TurnstileGate>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-gray-100 p-4">
+        <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
             <Dumbbell className="h-12 w-12 text-blue-600" />
@@ -93,8 +95,9 @@ const LoginPage = () => {
             </div>
           </CardFooter>
         </form>
-      </Card>
-    </div>
+        </Card>
+      </div>
+    </TurnstileGate>
   );
 };
 

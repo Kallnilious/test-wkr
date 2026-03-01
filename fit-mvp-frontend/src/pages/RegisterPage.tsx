@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { toast } from 'sonner';
 import { Dumbbell } from 'lucide-react';
+import { TurnstileGate } from '../components/TurnstileGate';
 import type { FitnessLevel } from '@fitness/api-client';
 
 const RegisterPage = () => {
@@ -55,8 +56,9 @@ const RegisterPage = () => {
   ];
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-gray-100 p-4">
-      <Card className="w-full max-w-md">
+    <TurnstileGate>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-gray-100 p-4">
+        <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
             <Dumbbell className="h-12 w-12 text-blue-600" />
@@ -164,8 +166,9 @@ const RegisterPage = () => {
             </div>
           </CardFooter>
         </form>
-      </Card>
-    </div>
+        </Card>
+      </div>
+    </TurnstileGate>
   );
 };
 
