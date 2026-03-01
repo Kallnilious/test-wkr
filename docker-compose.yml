@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: fitness_mvp_user
+      POSTGRES_PASSWORD: fitness_mvp_pass
+      POSTGRES_DB: fitness_mvp_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://fitness_mvp_user:fitness_mvp_pass@postgres:5432/fitness_mvp_db
+      JWT_SECRET: your-super-secret-jwt-secret-change-in-production
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+      NODE_ENV: production
+      PORT: "3000"
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:

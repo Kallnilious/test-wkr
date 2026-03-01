@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs'
 import WorkoutCard from '../components/workout/WorkoutCard';
 import { useWorkouts } from '../hooks/useWorkouts';
 import type { LocationType } from '@fitness/api-client';
-import { Dumbbell, History, Sparkles, Home, Building2, MapPin } from 'lucide-react';
+import { Dumbbell, History, Sparkles, Home, Building2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 const WorkoutPage = () => {
@@ -19,22 +19,18 @@ const WorkoutPage = () => {
     completeWorkout,
     isGenerating 
   } = useWorkouts();
-  
-  const [locationType, setLocationType] = useState<LocationType | 'ANY'>('ANY');
   const [isCompleting, setIsCompleting] = useState(false);
+  
+  const [locationType, setLocationType] = useState<LocationType>('GYM');
 
   const locationOptions = [
-    { value: 'ANY', label: 'Any Location', icon: MapPin },
-    { value: 'HOME', label: 'Home', icon: Home },
     { value: 'GYM', label: 'Gym', icon: Building2 },
-    { value: 'BOTH', label: 'Home or Gym', icon: MapPin },
+    { value: 'HOME', label: 'Home', icon: Home },
   ];
 
   const handleGenerateWorkout = async () => {
-    const selectedLocation = locationType === 'ANY' ? undefined : locationType;
-    
     try {
-      await generateWorkout(selectedLocation);
+      await generateWorkout(locationType);
     } catch (error) {
       console.error('Failed to generate workout:', error);
     }
@@ -84,9 +80,9 @@ const WorkoutPage = () => {
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="location">Location Preference</Label>
-                  <Select 
+                   <Select 
                     value={locationType} 
-                    onValueChange={(value: LocationType | 'ANY') => setLocationType(value)}
+                    onValueChange={(value: LocationType) => setLocationType(value)}
                     disabled={isGenerating}
                   >
                     <SelectTrigger>

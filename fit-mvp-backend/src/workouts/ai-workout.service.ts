@@ -153,7 +153,7 @@ Ensure locationType matches one of: HOME, GYM, BOTH.`;
   private async callDeepSeekAPI(prompt: string): Promise<string> {
     if (!this.deepseekApiKey) {
       // Fallback to a mock response for development
-      return this.mockAIResponse();
+      throw new InternalServerErrorException('DeepSeek API key is not set');
     }
 
     try {

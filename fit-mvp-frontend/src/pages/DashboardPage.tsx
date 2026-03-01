@@ -5,6 +5,8 @@ import { useUserStats } from '../hooks/useUserStats';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Progress } from '../components/ui/progress';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
+import { Label } from '../components/ui/label';
 import WorkoutCard from '../components/workout/WorkoutCard';
 import { 
   Dumbbell, 
@@ -14,11 +16,14 @@ import {
   Calendar, 
   TrendingUp,
   PlusCircle,
-  Clock
+  Clock,
+  Home,
+  Building2
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useState } from 'react';
+import type { LocationType } from '@fitness/api-client';
 
 const DashboardPage = () => {
   const { user } = useAuth();
@@ -32,11 +37,17 @@ const DashboardPage = () => {
   const { stats: userStats } = useUserStats();
   const { activeGoals } = useGoals();
   
-  const [, setIsCompleting] = useState(false);
+  const [_, setIsCompleting] = useState(false);
+  const [locationType, setLocationType] = useState<LocationType>('GYM');
+
+  const locationOptions = [
+    { value: 'GYM', label: 'Gym', icon: Building2 },
+    { value: 'HOME', label: 'Home', icon: Home },
+  ];
 
   const handleGenerateWorkout = async () => {
     try {
-      await generateWorkout(undefined);
+      await generateWorkout(locationType);
     } catch (error) {
       console.error('Failed to generate workout:', error);
     }
@@ -126,22 +137,49 @@ const DashboardPage = () => {
         </Card>
       </div>
 
-      {/* Current Workout Section */}
-      <div className="grid lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Current Workout Section */}
         <div className="lg:col-span-2">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-gray-900">
               {currentWorkout ? 'Current Workout' : 'No Active Workout'}
             </h2>
             {!currentWorkout && (
-              <Button 
-                onClick={handleGenerateWorkout} 
-                disabled={isGenerating}
-                className="flex items-center gap-2"
-              >
-                <PlusCircle className="h-4 w-4" />
-                {isGenerating ? 'Generating...' : 'Generate Workout'}
-              </Button>
+              <div className="flex items-center gap-4">
+                <div className="w-48">
+                  <Label htmlFor="location" className="sr-only">Location</Label>
+                  <Select 
+                    value={locationType} 
+                    onValueChange={(value: LocationType) => setLocationType(value)}
+                    disabled={isGenerating}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select location" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {locationOptions.map((option) => {
+                        const Icon = option.icon;
+                        return (
+                          <SelectItem key={option.value} value={option.value}>
+                            <div className="flex items-center gap-2">
+                              <Icon className="h-4 w-4" />
+                              <span>{option.label}</span>
+                            </div>
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button 
+                  onClick={handleGenerateWorkout} 
+                  disabled={isGenerating}
+                  className="flex items-center gap-2"
+                >
+                  <PlusCircle className="h-4 w-4" />
+                  {isGenerating ? 'Generating...' : 'Generate Workout'}
+                </Button>
+              </div>
             )}
           </div>
 
@@ -162,15 +200,42 @@ const DashboardPage = () => {
                   <p className="text-gray-600 mb-6">
                     Generate a personalized workout based on your goals and fitness level.
                   </p>
-                  <Button 
-                    onClick={handleGenerateWorkout} 
-                    disabled={isGenerating}
-                    size="lg"
-                    className="flex items-center gap-2 mx-auto"
-                  >
-                    <PlusCircle className="h-4 w-4" />
-                    {isGenerating ? 'Generating...' : 'Generate Workout'}
-                  </Button>
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto">
+                    <div className="w-full sm:w-48">
+                      <Label htmlFor="location" className="sr-only">Location</Label>
+                      <Select 
+                        value={locationType} 
+                        onValueChange={(value: LocationType) => setLocationType(value)}
+                        disabled={isGenerating}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select location" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {locationOptions.map((option) => {
+                            const Icon = option.icon;
+                            return (
+                              <SelectItem key={option.value} value={option.value}>
+                                <div className="flex items-center gap-2">
+                                  <Icon className="h-4 w-4" />
+                                  <span>{option.label}</span>
+                                </div>
+                              </SelectItem>
+                            );
+                          })}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <Button 
+                      onClick={handleGenerateWorkout} 
+                      disabled={isGenerating}
+                      size="lg"
+                      className="flex items-center gap-2 w-full sm:w-auto"
+                    >
+                      <PlusCircle className="h-4 w-4" />
+                      {isGenerating ? 'Generating...' : 'Generate Workout'}
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>

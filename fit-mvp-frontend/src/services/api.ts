@@ -1,6 +1,6 @@
 import type { RegisterRequest, LoginRequest, CreateGoalRequest, GoalResponse, WorkoutResponse, LocationType, AuthResponse, UserStatsResponse, UserResponse, UpdateUserRequest, UpdateFitnessLevelRequest } from '@fitness/api-client';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
 type RegisterData = RegisterRequest;
 
@@ -55,14 +55,14 @@ class ApiService {
 
   // Auth endpoints
   async register(data: RegisterData) {
-    return this.request<AuthResponse>('/auth/register', {
+    return this.request<AuthResponse>('/api/auth/register', {
       method: 'POST',
       body: JSON.stringify(data),
     });
   }
 
   async login(data: LoginData) {
-    return this.request<AuthResponse>('/auth/login', {
+    return this.request<AuthResponse>('/api/auth/login', {
       method: 'POST',
       body: JSON.stringify(data),
     });
@@ -70,18 +70,18 @@ class ApiService {
 
   // User profile endpoints
   async getCurrentUser() {
-    return this.request<UserResponse>('/users/me');
+    return this.request<UserResponse>('/api/users/me');
   }
 
   async updateUser(data: UpdateUserRequest) {
-    return this.request<UserResponse>('/users/me', {
+    return this.request<UserResponse>('/api/users/me', {
       method: 'PATCH',
       body: JSON.stringify(data),
     });
   }
 
   async updateFitnessLevel(data: UpdateFitnessLevelRequest) {
-    return this.request<UserResponse>('/users/me/fitness-level', {
+    return this.request<UserResponse>('/api/users/me/fitness-level', {
       method: 'PATCH',
       body: JSON.stringify(data),
     });
@@ -89,25 +89,25 @@ class ApiService {
 
   // Goals endpoints
   async createGoal(data: GoalData) {
-    return this.request<GoalResponse>('/goals', {
+    return this.request<GoalResponse>('/api/goals', {
       method: 'POST',
       body: JSON.stringify(data),
     });
   }
 
   async getGoals() {
-    return this.request<GoalResponse[]>('/goals');
+    return this.request<GoalResponse[]>('/api/goals');
   }
 
   async updateGoal(id: string, data: Partial<GoalData>) {
-    return this.request<GoalResponse>(`/goals/${id}`, {
+    return this.request<GoalResponse>(`/api/goals/${id}`, {
       method: 'PATCH',
       body: JSON.stringify(data),
     });
   }
 
   async deleteGoal(id: string) {
-    return this.request<GoalResponse>(`/goals/${id}`, {
+    return this.request<GoalResponse>(`/api/goals/${id}`, {
       method: 'DELETE',
     });
   }
@@ -115,29 +115,29 @@ class ApiService {
   // Workout generation endpoints
   async generateWorkout(locationType?: LocationType) {
     const body = locationType ? { locationType } : undefined;
-    return this.request<WorkoutResponse>('/workouts/generate', {
+    return this.request<WorkoutResponse>('/api/workouts/generate', {
       method: 'POST',
       body: body ? JSON.stringify(body) : undefined,
     });
   }
 
   async getNextWorkout() {
-    return this.request<WorkoutResponse>('/workouts/next');
+    return this.request<WorkoutResponse>('/api/workouts/next');
   }
 
   // Workout endpoints (to be implemented in backend)
   async completeWorkout(workoutId: string) {
-    return this.request<WorkoutResponse>(`/workouts/${workoutId}/complete`, {
+    return this.request<WorkoutResponse>(`/api/workouts/${workoutId}/complete`, {
       method: 'PATCH',
     });
   }
 
   async getWorkoutHistory() {
-    return this.request<WorkoutResponse[]>('/workouts');
+    return this.request<WorkoutResponse[]>('/api/workouts');
   }
 
   async getUserStats() {
-    return this.request<UserStatsResponse>('/workouts/stats');
+    return this.request<UserStatsResponse>('/api/workouts/stats');
   }
 }
 

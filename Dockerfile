@@ -2,36 +2,29 @@
 FROM node:20-alpine AS api-client-builder
 
 WORKDIR /app/packages/api-client
-
 COPY packages/api-client/package*.json ./
 RUN npm ci
-
 COPY packages/api-client/ ./
 RUN npm run build
 
 # Stage 2: Build frontend
 FROM node:20-alpine AS frontend-builder
 
-WORKDIR /app/fit-mvp-frontend
+WORKDIR /app
 
-# Build arguments for frontend environment variables
 ARG VITE_API_BASE_URL=
 ARG VITE_TURNSTILE_SITE_KEY=
 ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 ENV VITE_TURNSTILE_SITE_KEY=$VITE_TURNSTILE_SITE_KEY
 
-# Copy api-client package from previous stage
+# Copy api-client built output
 COPY --from=api-client-builder /app/packages/api-client/dist /app/packages/api-client/dist
 COPY --from=api-client-builder /app/packages/api-client/package.json /app/packages/api-client/
 
-# Install frontend dependencies
+WORKDIR /app/fit-mvp-frontend
 COPY fit-mvp-frontend/package*.json ./
 RUN npm ci --legacy-peer-deps
-
-# Copy frontend source
 COPY fit-mvp-frontend/ ./
-
-# Build frontend with environment variables
 RUN npm run build
 
 # Stage 3: Build backend
@@ -39,18 +32,16 @@ FROM node:20-alpine AS backend-builder
 
 WORKDIR /app
 
-# Copy api-client package from first stage
+# Copy api-client built output (must match file: reference in package.json)
 COPY --from=api-client-builder /app/packages/api-client/dist /app/packages/api-client/dist
 COPY --from=api-client-builder /app/packages/api-client/package.json /app/packages/api-client/
+COPY --from=api-client-builder /app/packages/api-client/node_modules /app/packages/api-client/node_modules
 
-# Install backend dependencies
+WORKDIR /app/fit-mvp-backend
 COPY fit-mvp-backend/package*.json ./
 RUN npm ci --legacy-peer-deps
-
-# Copy backend source
 COPY fit-mvp-backend/ ./
-
-# Build backend
+RUN npx prisma generate
 RUN npm run build
 
 # Stage 4: Production
@@ -58,27 +49,33 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Install production dependencies only
-COPY fit-mvp-backend/package*.json ./
-RUN npm ci --only=production --legacy-peer-deps
+# Copy api-client (must match file: reference from package.json)
+COPY --from=api-client-builder /app/packages/api-client/dist ./packages/api-client/dist
+COPY --from=api-client-builder /app/packages/api-client/package.json ./packages/api-client/
 
-# Copy built backend
-COPY --from=backend-builder /app/dist ./dist
-COPY --from=backend-builder /app/node_modules ./node_modules
+# Install prod deps from fit-mvp-backend dir to resolve file: refs
+COPY fit-mvp-backend/package*.json ./fit-mvp-backend/
+RUN cd fit-mvp-backend && npm ci --omit=dev --legacy-peer-deps
+
+# Move node_modules up and place api-client directly (file: creates broken symlinks)
+RUN mv fit-mvp-backend/node_modules ./node_modules && rm -rf fit-mvp-backend \
+    && rm -rf node_modules/@fitness/api-client \
+    && cp -r packages/api-client node_modules/@fitness/api-client
+
+# Copy built backend (nest builds to dist/src/)
+COPY --from=backend-builder /app/fit-mvp-backend/dist ./dist
 
 # Copy frontend build to be served as static files
 COPY --from=frontend-builder /app/fit-mvp-frontend/dist ./frontend-dist
 
-# Copy Prisma schema
+# Copy Prisma schema, migrations, and config
 COPY fit-mvp-backend/prisma ./prisma
-
-# Generate Prisma client
+COPY fit-mvp-backend/prisma.config.ts ./prisma.config.ts
 RUN npx prisma generate
 
-# Create entrypoint script with migration and startup
-RUN echo '#!/bin/sh
-npx prisma migrate deploy
-node dist/main.js' > /app/entrypoint.sh && chmod +x /app/entrypoint.sh
+# Entrypoint: migrate then start
+RUN printf '#!/bin/sh\nnpx prisma migrate deploy\nnode dist/src/main.js\n' > /app/entrypoint.sh \
+    && chmod +x /app/entrypoint.sh
 
 EXPOSE 3000
 
