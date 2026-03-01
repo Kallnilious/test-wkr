@@ -16,7 +16,9 @@ export class GoalsService {
         description: createGoalDto.description,
         targetValue: createGoalDto.targetValue,
         currentValue: createGoalDto.currentValue,
-        targetDate: createGoalDto.targetDate ? new Date(createGoalDto.targetDate) : undefined,
+        targetDate: createGoalDto.targetDate
+          ? new Date(createGoalDto.targetDate)
+          : undefined,
       },
     });
   }
@@ -40,13 +42,15 @@ export class GoalsService {
 
   async update(userId: string, id: string, updateGoalDto: UpdateGoalRequest) {
     await this.findOne(userId, id);
-    
+
     // Prepare update data, handling date conversion
     const updateData: any = { ...updateGoalDto };
     if (updateGoalDto.targetDate !== undefined) {
-      updateData.targetDate = updateGoalDto.targetDate ? new Date(updateGoalDto.targetDate) : null;
+      updateData.targetDate = updateGoalDto.targetDate
+        ? new Date(updateGoalDto.targetDate)
+        : null;
     }
-    
+
     return this.prisma.goal.update({
       where: { id },
       data: updateData,

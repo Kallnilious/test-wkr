@@ -29,7 +29,8 @@ export class GoalsController {
   @Post()
   create(
     @Request() req: AuthenticatedRequest,
-    @Body(new ZodValidationPipe<CreateGoalRequest>(CreateGoalRequestSchema)) createGoalDto: CreateGoalRequest,
+    @Body(new ZodValidationPipe<CreateGoalRequest>(CreateGoalRequestSchema))
+    createGoalDto: CreateGoalRequest,
   ) {
     const userId = req.user.id;
     return this.goalsService.create(userId, createGoalDto);
@@ -51,7 +52,8 @@ export class GoalsController {
   update(
     @Request() req: AuthenticatedRequest,
     @Param('id') id: string,
-    @Body(new ZodValidationPipe<UpdateGoalRequest>(UpdateGoalRequestSchema)) updateGoalDto: UpdateGoalRequest,
+    @Body(new ZodValidationPipe<UpdateGoalRequest>(UpdateGoalRequestSchema))
+    updateGoalDto: UpdateGoalRequest,
   ) {
     const userId = req.user.id;
     return this.goalsService.update(userId, id, updateGoalDto);

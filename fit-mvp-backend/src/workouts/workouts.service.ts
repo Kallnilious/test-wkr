@@ -120,6 +120,40 @@ export class WorkoutsService {
     });
   }
 
+  async toggleExerciseCompletion(
+    userId: string,
+    workoutId: string,
+    exerciseId: string,
+    completed: boolean,
+  ) {
+    // First verify the workout belongs to the user
+    const workout = await this.prisma.workout.findFirst({
+      where: { id: workoutId, userId },
+      include: { exercises: true },
+    });
+
+    if (!workout) {
+      throw new NotFoundException(`Workout with ID ${workoutId} not found`);
+    }
+
+    // Verify the exercise belongs to this workout
+    const exercise = workout.exercises.find((ex) => ex.id === exerciseId);
+    if (!exercise) {
+      throw new NotFoundException(
+        `Exercise with ID ${exerciseId} not found in workout`,
+      );
+    }
+
+    // Update the exercise completion status
+    return this.prisma.exercise.update({
+      where: { id: exerciseId },
+      data: {
+        completed,
+        completedAt: completed ? new Date() : null,
+      },
+    });
+  }
+
   async remove(userId: string, id: string) {
     await this.findOne(userId, id);
     return this.prisma.workout.delete({

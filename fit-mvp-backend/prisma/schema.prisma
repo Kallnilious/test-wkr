@@ -84,6 +84,8 @@ model Exercise {
   weight       String?
   restTime     Int?         // seconds
   locationType LocationType
+  completed    Boolean      @default(false)
+  completedAt  DateTime?
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
 }

@@ -1,6 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import type { UpdateUserRequest, UpdateFitnessLevelRequest } from '@fitness/api-client';
+import type {
+  UpdateUserRequest,
+  UpdateFitnessLevelRequest,
+} from '@fitness/api-client';
 
 @Injectable()
 export class UsersService {
@@ -40,7 +43,10 @@ export class UsersService {
     });
   }
 
-  async updateFitnessLevel(userId: string, updateFitnessLevelDto: UpdateFitnessLevelRequest) {
+  async updateFitnessLevel(
+    userId: string,
+    updateFitnessLevelDto: UpdateFitnessLevelRequest,
+  ) {
     await this.findOne(userId);
     return this.prisma.user.update({
       where: { id: userId },

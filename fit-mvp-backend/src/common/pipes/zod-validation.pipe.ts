@@ -6,13 +6,8 @@ export class ZodValidationPipe<T> implements PipeTransform {
   constructor(private schema: ZodType<T, any, any>) {}
 
   transform(value: unknown): T {
-    // Debug logging for goal updates
-
-    let parsedValue = value;
-    
-    
     try {
-      return this.schema.parse(parsedValue) as T;
+      return this.schema.parse(value) as T;
     } catch (error: unknown) {
       if (error instanceof ZodError) {
         console.error('Zod validation error details:', error.issues);
