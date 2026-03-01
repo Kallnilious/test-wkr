@@ -32,6 +32,7 @@ const DashboardPage = () => {
     completedWorkouts, 
     generateWorkout, 
     completeWorkout,
+    toggleExerciseCompletion,
     isGenerating 
   } = useWorkouts();
   const { stats: userStats } = useUserStats();
@@ -61,6 +62,14 @@ const DashboardPage = () => {
       console.error('Failed to complete workout:', error);
     } finally {
       setIsCompleting(false);
+    }
+  };
+
+  const handleToggleExercise = async (workoutId: string, exerciseId: string, completed: boolean) => {
+    try {
+      await toggleExerciseCompletion({ workoutId, exerciseId, completed });
+    } catch (error) {
+      console.error('Failed to toggle exercise:', error);
     }
   };
 
@@ -138,7 +147,6 @@ const DashboardPage = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Current Workout Section */}
         <div className="lg:col-span-2">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-gray-900">
@@ -188,6 +196,7 @@ const DashboardPage = () => {
               workout={currentWorkout} 
               onComplete={handleCompleteWorkout}
               onStart={() => toast.info('Starting workout! (Feature in development)')}
+              onToggleExercise={handleToggleExercise}
             />
           ) : (
             <Card>

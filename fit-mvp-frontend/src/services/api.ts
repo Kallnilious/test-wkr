@@ -1,4 +1,4 @@
-import type { RegisterRequest, LoginRequest, CreateGoalRequest, GoalResponse, WorkoutResponse, LocationType, AuthResponse, UserStatsResponse, UserResponse, UpdateUserRequest, UpdateFitnessLevelRequest } from '@fitness/api-client';
+import type { RegisterRequest, LoginRequest, CreateGoalRequest, GoalResponse, WorkoutResponse, LocationType, AuthResponse, UserStatsResponse, UserResponse, UpdateUserRequest, UpdateFitnessLevelRequest, ExerciseResponse } from '@fitness/api-client';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
@@ -138,6 +138,13 @@ class ApiService {
 
   async getUserStats() {
     return this.request<UserStatsResponse>('/api/workouts/stats');
+  }
+
+  async toggleExerciseCompletion(workoutId: string, exerciseId: string, completed: boolean) {
+    return this.request<ExerciseResponse>(`/api/workouts/${workoutId}/exercises/${exerciseId}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ completed }),
+    });
   }
 }
 

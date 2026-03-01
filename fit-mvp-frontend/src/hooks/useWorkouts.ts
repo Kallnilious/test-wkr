@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../services/api';
-import type { WorkoutResponse as Workout, LocationType } from '@fitness/api-client';
+import type { WorkoutResponse as Workout, LocationType, ExerciseResponse } from '@fitness/api-client';
 import { toast } from 'sonner';
 
 export const useWorkouts = () => {
@@ -63,6 +63,37 @@ export const useWorkouts = () => {
     },
   });
 
+  const toggleExerciseMutation = useMutation({
+    mutationFn: async ({ workoutId, exerciseId, completed }: { workoutId: string; exerciseId: string; completed: boolean }) => {
+      return api.toggleExerciseCompletion(workoutId, exerciseId, completed);
+    },
+    onSuccess: (updatedExercise: ExerciseResponse, variables) => {
+      queryClient.setQueryData(['workouts'], (old: Workout[] = []) => {
+        return old.map(workout => {
+          if (workout.id === variables.workoutId) {
+            return {
+              ...workout,
+              exercises: workout.exercises.map(ex => 
+                ex.id === variables.exerciseId 
+                  ? updatedExercise
+                  : ex
+              )
+            };
+          }
+          return workout;
+        });
+      });
+      
+      if (variables.completed) {
+        toast.success('Exercise completed!');
+      }
+    },
+    onError: (error) => {
+      toast.error('Failed to update exercise');
+      console.error('Toggle exercise error:', error);
+    },
+  });
+
   const currentWorkout = workouts.find(w => !w.completed);
   const completedWorkouts = workouts.filter(w => w.completed);
 
@@ -76,5 +107,7 @@ export const useWorkouts = () => {
     isGenerating: generateWorkoutMutation.isPending,
     completeWorkout: completeWorkoutMutation.mutateAsync,
     isCompleting: completeWorkoutMutation.isPending,
+    toggleExerciseCompletion: toggleExerciseMutation.mutateAsync,
+    isTogglingExercise: toggleExerciseMutation.isPending,
   };
 };

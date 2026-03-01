@@ -15,6 +15,8 @@ export type {
   UpdateGoalRequest,
   ExerciseResponse,
   CreateExerciseRequest,
+  ToggleExerciseCompletionRequest,
+  ToggleExerciseCompletionResponse,
   WorkoutResponse,
   WorkoutListResponse,
   GenerateWorkoutRequest,

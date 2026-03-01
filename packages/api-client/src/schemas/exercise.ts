@@ -9,9 +9,11 @@ const ExerciseBaseSchema = z.object({
   description: z.string().optional(),
   sets: z.number().int().positive(),
   reps: z.number().int().positive(),
-  weight: z.number().optional(),
+  weight: z.string().optional(),
   restTime: z.number().int().optional(),
   locationType: LocationTypeSchema,
+  completed: z.boolean(),
+  completedAt: z.string().datetime().optional(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
 });
@@ -26,8 +28,17 @@ export const CreateExerciseRequestSchema = z.object({
   description: z.string().optional(),
   sets: z.number().int().positive(),
   reps: z.number().int().positive(),
-  weight: z.number().optional(),
+  weight: z.string().optional(),
   restTime: z.number().int().optional(),
   locationType: LocationTypeSchema,
 });
 export type CreateExerciseRequest = z.infer<typeof CreateExerciseRequestSchema>;
+
+// Toggle exercise completion request/response
+export const ToggleExerciseCompletionRequestSchema = z.object({
+  completed: z.boolean(),
+});
+export type ToggleExerciseCompletionRequest = z.infer<typeof ToggleExerciseCompletionRequestSchema>;
+
+export const ToggleExerciseCompletionResponseSchema = ExerciseResponseSchema;
+export type ToggleExerciseCompletionResponse = z.infer<typeof ToggleExerciseCompletionResponseSchema>;

@@ -17,6 +17,7 @@ const WorkoutPage = () => {
     completedWorkouts, 
     generateWorkout, 
     completeWorkout,
+    toggleExerciseCompletion,
     isGenerating 
   } = useWorkouts();
   const [isCompleting, setIsCompleting] = useState(false);
@@ -51,6 +52,14 @@ const WorkoutPage = () => {
   const handleStartWorkout = (_workoutId: string) => {
     toast.info('Starting workout timer! (Feature in development)');
     // In a real app, you would navigate to a workout timer/session page
+  };
+
+  const handleToggleExercise = async (workoutId: string, exerciseId: string, completed: boolean) => {
+    try {
+      await toggleExerciseCompletion({ workoutId, exerciseId, completed });
+    } catch (error) {
+      console.error('Failed to toggle exercise:', error);
+    }
   };
 
   return (
@@ -166,6 +175,7 @@ const WorkoutPage = () => {
                   compact
                   onComplete={handleCompleteWorkout}
                   onStart={handleStartWorkout}
+                  onToggleExercise={handleToggleExercise}
                 />
                 <div className="mt-4 space-y-3">
                   <Button 
@@ -250,6 +260,7 @@ const WorkoutPage = () => {
                   key={workout.id} 
                   workout={workout}
                   onStart={handleStartWorkout}
+                  onToggleExercise={handleToggleExercise}
                 />
               ))}
             </div>
