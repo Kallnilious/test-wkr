@@ -1,7 +1,7 @@
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from './ui/button';
-import { LogOut, Home, Target, Dumbbell, User, Menu, X } from 'lucide-react';
+import { LogOut, Home, Target, Dumbbell, User, Menu, X, Flame } from 'lucide-react';
 import { useState } from 'react';
 
 const Layout = () => {
@@ -32,8 +32,8 @@ const Layout = () => {
           <div className="flex justify-between items-center h-14 md:h-16">
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-2">
-              <Dumbbell className="h-6 w-6 text-blue-600" />
-              <span className="text-lg md:text-xl font-bold text-gray-900">FitCoach</span>
+              <img src="/logo.png" alt="FitForge" className="h-8 w-8 rounded-lg" />
+              <span className="text-lg md:text-xl font-bold bg-gradient-to-r from-orange-500 to-red-600 bg-clip-text text-transparent">FitForge</span>
             </Link>
             
             {/* Desktop Navigation */}
@@ -46,8 +46,8 @@ const Layout = () => {
                     to={item.path} 
                     className={`flex items-center space-x-2 px-3 py-2 rounded-md transition-colors ${
                       isActive(item.path) 
-                        ? 'bg-blue-50 text-blue-600' 
-                        : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+                        ? 'bg-orange-50 text-orange-600' 
+                        : 'text-gray-700 hover:text-orange-600 hover:bg-gray-50'
                     }`}
                   >
                     <Icon className="h-4 w-4" />
@@ -96,8 +96,8 @@ const Layout = () => {
                     onClick={() => setMobileMenuOpen(false)}
                     className={`flex items-center space-x-3 px-3 py-3 rounded-md transition-colors ${
                       isActive(item.path) 
-                        ? 'bg-blue-50 text-blue-600' 
-                        : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+                        ? 'bg-orange-50 text-orange-600' 
+                        : 'text-gray-700 hover:text-orange-600 hover:bg-gray-50'
                     }`}
                   >
                     <Icon className="h-5 w-5" />

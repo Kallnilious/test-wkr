@@ -7,7 +7,7 @@ import { Label } from '../components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { toast } from 'sonner';
-import { Dumbbell } from 'lucide-react';
+
 import { TurnstileGate } from '../components/TurnstileGate';
 import type { FitnessLevel } from '@fitness/api-client';
 
@@ -57,15 +57,13 @@ const RegisterPage = () => {
 
   return (
     <TurnstileGate>
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-gray-100 p-4 py-8">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 to-gray-100 p-4 py-8">
         <Card className="w-full max-w-md touch-manipulation">
           <CardHeader className="text-center pb-4">
             <div className="flex justify-center mb-3 md:mb-4">
-              <div className="h-14 w-14 md:h-16 md:w-16 rounded-full bg-blue-100 flex items-center justify-center">
-                <Dumbbell className="h-8 w-8 md:h-10 md:w-10 text-blue-600" />
-              </div>
+              <img src="/logo.png" alt="FitForge" className="h-16 w-16 md:h-20 md:w-20 rounded-2xl shadow-lg" />
             </div>
-            <CardTitle className="text-xl md:text-2xl">Join FitCoach</CardTitle>
+            <CardTitle className="text-xl md:text-2xl bg-gradient-to-r from-orange-500 to-red-600 bg-clip-text text-transparent font-bold">Join FitForge</CardTitle>
             <CardDescription className="text-sm md:text-base">
               Create your account to start your fitness journey
             </CardDescription>
@@ -169,7 +167,7 @@ const RegisterPage = () => {
                 Already have an account?{' '}
                 <Link 
                   to="/login" 
-                  className="text-blue-600 hover:text-blue-800 hover:underline font-medium"
+                  className="text-orange-600 hover:text-orange-800 hover:underline font-medium"
                 >
                   Sign in
                 </Link>
