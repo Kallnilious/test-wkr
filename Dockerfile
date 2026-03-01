@@ -14,6 +14,12 @@ FROM node:20-alpine AS frontend-builder
 
 WORKDIR /app/fit-mvp-frontend
 
+# Build arguments for frontend environment variables
+ARG VITE_API_BASE_URL=
+ARG VITE_TURNSTILE_SITE_KEY=
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+ENV VITE_TURNSTILE_SITE_KEY=$VITE_TURNSTILE_SITE_KEY
+
 # Copy api-client package from previous stage
 COPY --from=api-client-builder /app/packages/api-client/dist /app/packages/api-client/dist
 COPY --from=api-client-builder /app/packages/api-client/package.json /app/packages/api-client/
@@ -25,7 +31,7 @@ RUN npm ci --legacy-peer-deps
 # Copy frontend source
 COPY fit-mvp-frontend/ ./
 
-# Build frontend
+# Build frontend with environment variables
 RUN npm run build
 
 # Stage 3: Build backend
@@ -69,11 +75,7 @@ COPY fit-mvp-backend/prisma ./prisma
 # Generate Prisma client
 RUN npx prisma generate
 
-# Install @nestjs/serve-static for serving frontend
-RUN npm install @nestjs/serve-static
-
-# Update main.ts to serve static files (will be done via config)
-# Create entrypoint script
+# Create entrypoint script with migration and startup
 RUN echo '#!/bin/sh
 npx prisma migrate deploy
 node dist/main.js' > /app/entrypoint.sh && chmod +x /app/entrypoint.sh
