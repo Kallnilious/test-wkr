@@ -52,8 +52,8 @@ WORKDIR /app
 COPY --from=api-client-builder /app/packages/api-client/dist ./packages/api-client/dist
 COPY --from=api-client-builder /app/packages/api-client/package.json ./packages/api-client/
 
-# Install prod deps from fit-mvp-backend dir to resolve file: refs
-COPY fit-mvp-backend/package*.json ./fit-mvp-backend/
+# Copy backend from builder stage
+COPY --from=backend-builder /app/fit-mvp-backend/package*.json ./fit-mvp-backend/
 RUN cd fit-mvp-backend && npm ci --omit=dev --legacy-peer-deps
 
 # Move node_modules up and place api-client directly (file: creates broken symlinks)
@@ -68,8 +68,8 @@ COPY --from=backend-builder /app/fit-mvp-backend/dist ./dist
 COPY --from=frontend-builder /app/fit-mvp-frontend/dist ./frontend-dist
 
 # Copy Prisma schema, migrations, and config
-COPY fit-mvp-backend/prisma ./prisma
-COPY fit-mvp-backend/prisma.config.ts ./prisma.config.ts
+COPY --from=backend-builder /app/fit-mvp-backend/prisma ./prisma
+COPY --from=backend-builder /app/fit-mvp-backend/prisma.config.ts ./prisma.config.ts
 RUN npx prisma generate
 
 # Entrypoint: migrate then start
