@@ -6,7 +6,6 @@ COPY packages/api-client/package*.json ./
 RUN npm ci
 COPY packages/api-client/ ./
 RUN npm run build
-
 # Stage 2: Build frontend
 FROM node:20-alpine AS frontend-builder
 
