@@ -1,4 +1,4 @@
-import type { RegisterRequest, LoginRequest, CreateGoalRequest, GoalResponse, WorkoutResponse, LocationType, FocusArea, AuthResponse, UserStatsResponse, UserResponse, UpdateUserRequest, UpdateFitnessLevelRequest, ExerciseResponse, CreateWeightEntryRequest, UpdateWeightEntryRequest, WeightEntryResponse, WeightEntryListResponse, WeightStatsResponse, UpdateWeightUnitRequest, WeightUnit } from '@fitness/api-client';
+import type { RegisterRequest, LoginRequest, CreateGoalRequest, GoalResponse, WorkoutResponse, LocationType, FocusArea, AuthResponse, UserStatsResponse, UserResponse, UpdateUserRequest, UpdateFitnessLevelRequest, ExerciseResponse, CreateWeightEntryRequest, UpdateWeightEntryRequest, WeightEntryResponse, WeightEntryListResponse, WeightStatsResponse, UpdateWeightUnitRequest } from '@fitness/api-client';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
@@ -202,6 +202,9 @@ class ApiService {
     return this.request<UserResponse>('/api/weight/preferences/unit', {
       method: 'PATCH',
       body: JSON.stringify(data),
+    });
+  }
+
   async swapExercise(workoutId: string, exerciseId: string, locationType?: LocationType, focusArea?: FocusArea) {
     const params = new URLSearchParams();
     if (locationType) params.set('locationType', locationType);

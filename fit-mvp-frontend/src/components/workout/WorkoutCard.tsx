@@ -126,6 +126,12 @@ const WorkoutCard: React.FC<WorkoutCardProps> = ({
                 Start
               </Button>
             )}
+            {!workout.completed && onComplete && (
+              <Button size="sm" onClick={() => onComplete(workout.id)} className="flex-1 h-9 text-xs">
+                <CheckCircle className="h-3.5 w-3.5 mr-1" />
+                Complete
+              </Button>
+            )}
             {!workout.completed && onRegenerate && (
               <Button 
                 variant="outline" 
