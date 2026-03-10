@@ -6,10 +6,12 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
+import { Checkbox } from '../components/ui/checkbox';
 import { Scale, PlusCircle, TrendingUp, Calendar, Trash2, Edit } from 'lucide-react';
 import { toast } from 'sonner';
 import { useWeight } from '../hooks/useWeight';
 import { useAuth } from '../contexts/AuthContext';
+import WeightChart from '../components/weight/WeightChart';
 import type { WeightEntryResponse, WeightUnit } from '@fitness/api-client';
 const formatDate = (date: Date | string) => {
   return new Date(date).toLocaleDateString('en-US', { 
@@ -47,6 +49,7 @@ const WeightPage = () => {
   const [notes, setNotes] = useState<string>('');
   const [activeTab, setActiveTab] = useState('overview');
   const [unit, setUnit] = useState<WeightUnit>(user?.userWeightUnit || 'LB');
+  const [showBodyFat, setShowBodyFat] = useState(false);
 
   const resetForm = () => {
     setWeight('');
@@ -123,6 +126,7 @@ const WeightPage = () => {
   };
 
   const sortedEntries = weightEntries; // already sorted by useWeight
+  const hasBodyFatEntries = weightEntries.some(entry => entry.bodyFat !== undefined);
   const isMutating = isCreating || isUpdating || isDeleting;
 
   const formatWeight = (weightKg: number | undefined) => {
@@ -308,16 +312,30 @@ const WeightPage = () => {
 
           {/* Chart Placeholder */}
           <Card>
-            <CardHeader>
-              <CardTitle>Weight Trend</CardTitle>
-              <CardDescription>Your weight progression over time</CardDescription>
-            </CardHeader>
-            <CardContent className="h-64 flex items-center justify-center">
-              <div className="text-center text-gray-500">
-                <TrendingUp className="h-12 w-12 mx-auto mb-2 text-gray-300" />
-                <p>Chart will be implemented with a graphing library</p>
-                <p className="text-sm">For now, see the history tab for your entries</p>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>Weight Trend</CardTitle>
+                <CardDescription>Your weight progression over time</CardDescription>
               </div>
+              {hasBodyFatEntries && (
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="show-bodyfat" 
+                    checked={showBodyFat}
+                    onCheckedChange={(checked) => setShowBodyFat(checked === true)}
+                    disabled={!hasBodyFatEntries}
+                  />
+                  <label
+                    htmlFor="show-bodyfat"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    Show body fat
+                  </label>
+                </div>
+              )}
+            </CardHeader>
+            <CardContent className="min-h-64">
+              <WeightChart weightEntries={weightEntries} unit={unit} showBodyFat={showBodyFat && hasBodyFatEntries} />
             </CardContent>
           </Card>
         </TabsContent>
